@@ -6,13 +6,21 @@
           <div class="titleRow">
             <input
               type="checkbox"
+              v-model="colorList.selectState"
               @click="colorList.nonbinaryCheckboxChange()"
             />
             <div>list {{ index + 1 }}</div>
           </div>
           <div class="colorItemRow" v-for="item in colorList.itemAmount">
             <div class="subRow">
-              <input type="checkbox" v-model="colorList.colorState[item - 1]" />
+              <input
+                type="checkbox"
+                v-model="colorList.colorState[item - 1]"
+                @change="
+                  colorList.scramble(false);
+                  colorList.checkboxChange();
+                "
+              />
               <div>list {{ item }}</div>
             </div>
             <div class="subRow">
@@ -20,6 +28,12 @@
                 type="number"
                 class="invisibleInput"
                 v-model="colorList.colorCount[item - 1]"
+                @input="
+                  colorList.scramble(false);
+                  colorList.colorCount[item - 1] = Number(
+                    colorList.colorCount[item - 1]
+                  );
+                "
               />
               <input
                 class="squareColorSelector"
@@ -33,7 +47,10 @@
     </div>
     <div class="formContainer">
       <div class="sortContainer" v-for="(colorList, index) in colorListArray">
-        <div class="titleRow">
+        <div
+          class="titleRow"
+          style="justify-content: space-between; width: 100%"
+        >
           <div>list {{ index + 1 }}</div>
           <button @click="colorList.scramble()" class="shuffleButton">
             перемешать
@@ -96,7 +113,7 @@ export default {
   max-width: 1200px;
   margin: 30px;
 }
-@media (max-width: 1200px) {
+@media (max-width: 1250px) {
   .pageContainer {
     border: 1px solid black;
     flex-direction: column;
