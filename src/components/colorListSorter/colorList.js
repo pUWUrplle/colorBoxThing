@@ -76,6 +76,7 @@ export default class colorList {
     }
     let reactivityReset = { ...this.colorState };
     this.colorState = reactivityReset;
+    this.scramble(false);
   }
   checkboxChange() {
     let checkboxCount = 0;
@@ -90,4 +91,3 @@ export default class colorList {
     }
   }
 }
-
