@@ -1,5 +1,5 @@
 export default class colorList {
-  selectState = "false"; //"true","false","indeterminate"
+  selectState = 0; //1=true,0=false,2=indeterminate
   itemAmount = 0; //can replace this by just counting elements in any of the following arrays
   colorArray = [];
   colorCount = [];
@@ -8,7 +8,7 @@ export default class colorList {
   scrambleState = false;
 
   constructor() {
-    this.selectState = "false";
+    this.selectState = 0;
     this.itemAmount = Math.floor(4 + Math.random() * 6); // 4 and 6 can be parametered to set min and max amount of colors
     for (let i = 0; i < this.itemAmount; i++) {
       this.colorArray[i] =
@@ -18,8 +18,11 @@ export default class colorList {
     }
   }
   decColorCount(colorId) {
-    if (this.colorCount[colorId] > 0) this.colorCount[colorId]--; //decrement for removing color boxes on click
-    //same responsiveness issue as checkboxes
+    if (this.colorCount[colorId] > 0) {
+      this.colorCount[colorId]--;
+      let reactivityReset = { ...this.colorCount };
+      this.colorCount = reactivityReset;
+    } //decrement for removing color boxes on click
   }
   decSortedColor(arrayId) {
     console.log(arrayId);
@@ -30,7 +33,8 @@ export default class colorList {
     }
     //same responsiveness issue as checkboxes
   }
-  scramble() {
+  scramble(stateFlip = true) {
+    if (stateFlip == false) this.scrambleState = !this.scrambleState;
     if (this.scrambleState) {
       this.scrambleState = false;
       return;
@@ -42,7 +46,6 @@ export default class colorList {
     for (let i = 0; i < this.itemAmount; i++) {
       if (this.colorState[i] == true) globalColorCount += this.colorCount[i]; //calculates the amount of colors, needed to be randomized
     }
-    console.log(globalColorCount);
     for (let j = 0; j < globalColorCount; j++) {
       let randomRoll =
         1 + Math.floor(Math.random() * (globalColorCount - 1 - j)); // roll a random color number from 1 to color count,
@@ -61,16 +64,30 @@ export default class colorList {
   }
   nonbinaryCheckboxChange() {
     let newVal = true; // ran out of time to fix this properly.
-    if (this.selectState == "false" || this.selectState == "indeterminate") {
+    if (this.selectState == 0 || this.selectState == 2) {
       newVal = true;
-      this.selectState = "true";
+      this.selectState = 1;
     } else {
       newVal = false;
-      this.selectState = "false";
+      this.selectState = 0;
     }
-    console.log(newVal);
     for (let i = 0; i < this.itemAmount; i++) {
       this.colorState[i] = newVal;
     }
+    let reactivityReset = { ...this.colorState };
+    this.colorState = reactivityReset;
+  }
+  checkboxChange() {
+    let checkboxCount = 0;
+    for (let i = 0; i < this.itemAmount; i++) {
+      if (this.colorState[i] == true) {
+        checkboxCount++;
+      } else {
+        checkboxCount--;
+      }
+      if (checkboxCount == this.itemAmount) this.selectState = 1;
+      if (checkboxCount == -this.itemAmount + 1) this.selectState = 0;
+    }
   }
 }
+
